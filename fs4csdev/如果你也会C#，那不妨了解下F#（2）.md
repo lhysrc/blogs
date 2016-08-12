@@ -1,5 +1,6 @@
 # 运算符和其他基本语法
-本文链接：[http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-2.html](本文链接：http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-2.html)
+本文链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-2.html>
+
 ## 一些废话
 一门语言火不火，与语言本身并没太大关系，主要看语言的推广。
 推广得好，用的人多，问题也能及时得到解决，用的人就越多，这是一个良性循环，即使语言本身有很多不足也很快能得到解决。  

@@ -1,3 +1,5 @@
+本文链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-1.html>
+
 ## 简单介绍
 
 **F#**（与C#一样，念作“F Sharp”）是一种基于.Net框架的强类型、静态类型的函数式编程语言。
