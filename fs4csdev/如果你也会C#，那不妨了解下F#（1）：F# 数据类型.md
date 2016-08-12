@@ -86,7 +86,7 @@ printfn "0到100中的奇数的和为%A" sum ;;
 |  byte| byte by = 86;| let by = 86y <br> let by = 0b00000101y <br> let by = ‘a’B |
 |  unsigned byte| sbyte sby = 86;| let sby = 86uy <br> let sby = 0b00000101uy |
 |  bool| bool b = true;| let b = true |
-|  double| double d = 0.2;<br>  double d = 0 .2d <br> double d = 2e-1 <br> double d = 2 <br> double d0 = 0 | let d = 0.2 <br> let d = 2e-1 <br> let d = 2. <br> let d0 = 0x0000000000000000LF| 
+|  double| double d = 0.2;<br>  double d = 0.2d <br> double d = 2e-1 <br> double d = 2 <br> double d0 = 0 | let d = 0.2 <br> let d = 2e-1 <br> let d = 2. <br> let d0 = 0x0000000000000000LF| 
 |  float| float f = 0.3;<br> foat f = 0.3f;<br> float f = 2;<br>float f0 = 0.0f;| let f = 0.3f <br> let f = 0.3F<br> let f = 2.f <br> let f0 = 0x0000000000000000lf 
 |  native int |IntPtr n = new IntPtr(4); |let n = 4n|
 |   unsigned native int |UIntPtr n = new UIntPtr(4);| let n = 4un|
