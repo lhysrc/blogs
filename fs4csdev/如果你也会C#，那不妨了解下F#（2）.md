@@ -1,4 +1,4 @@
-# 运算符和其他基本语法
+# 数值运算和其他基本语法
 本文链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-2.html>
 
 ## 一些废话
@@ -10,10 +10,14 @@
 赵姐夫之前说过要做F#在国内的推广者，几年过去了，也是无声无息。  
 
 那为什么在2016年的现在，那么多新的语言和技术，我们还要来了解F#呢？  
-F#和C#也是基于.Net平台的语言，在学习过程中.Net框架中很多以前不理解的东西，通过F#就变得很容易理解了。
-函数式语言的“天然支持异步和并行”的能力，也使得多线程开发变得简单。
+
+- F#和C#一样，也是基于.Net平台的语言，了解了语法后，就能快速地使用.Net框架甚至C#编写的框架，
+而且在学习过程中.Net框架中很多以前不理解的东西，通过F#就变得很容易理解了。
+- 函数式语言的“天然支持异步和并行”的能力，也使得多线程开发变得简单。
 C#在最近的版本中经常得益于F#对.Net框架的推进，如加入了async关键字，有Tuple了（虽然在语法层面不支持）。
-F#并无法替代C#，但两者却能起到互补的作用。
+- 在最近发布的.Net Core中，也可以通过`dotnet new -l f#`来创建F#项目。*不过.Net Core里的F#还有些坑，这个有空再详说了。😅*
+
+**F#并无法替代C#，但两者却能起到互补的作用。**
 
 记得《七周七语言》里说过：
 > 每学一门新的语言，思维方式都会发生改变。编程语言亦是如此。
@@ -21,6 +25,66 @@ F#并无法替代C#，但两者却能起到互补的作用。
 作者在书中说，每学习一门语言都会去找互动教程，但大多数情况下并找不到称心如意的。
 > 若想领会一门语言的精髓，它（指互动教程）可就无能为力了。我想要的是那种痛快淋漓、深入探索语言本质的感觉。 
 
-我是没有作者的这种能通过探索语言本质的能力来介绍F#，但希望也能让大家发现F#语言的*动人心弦之处*。
+我是没有作者的这种能通过探索语言本质的能力来介绍F#，但希望也能让大家发现F#语言的**动人心弦之处**。
 废话说得有点多了，下面继续介绍F#吧。
 
+## 数值运算
+<p id="sample"></p>
+我们再翻出[上一篇](http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-1.html)的小例子：
+
+```
+let mutable sum = 0 
+for i = 0 to 100 do
+    if i%2 <> 0 then sum <- sum + i 
+printfn "0到100中的奇数的和为%A" sum ;;
+```
+
+四则运算不多说，但对于浮点数（float和float32）类型，还支持`**`（幂）语法。
+```
+2.**3.;; //8
+```
+相当于C#的
+
+### 基础数学函数
+Routine Description Example Result 
+abs Absolute value of a number abs −1.0 1.0 
+ceil Round up to the nearest integer ceil 9.1 10.0 
+exp Raise a value to a power of e exp 1.0 2.718 floor Round down to the nearest integer floor 9.9 9.0 sign Sign of the value sign −5 −1 log Natural logarithm log 2.71828 1.0 log10 Logarithm in base 10 log10 1000.0 3.0 sqrt Square root sqrt 4.0 2.0 cos Cosine cos 0.0 1.0 sin Sine sin 0.0 0.0 tan Tangent tan 1.0 1.557 pown Compute the power of an integer pown 2L 10 1024L
+
+### 大整数
+在[上一篇](http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-1.html)的数值类型对比中，
+我们可以看出，F#在语法层面上支持大整数。大整数在.Net 4.0添加到框架中，在System.Numerics模块里。
+F#创建项目时默认引用了此dll。
+```
+let bigInt = 4325I;; //相当于C#的
+```
+在内存足够的情况下，Big Int支持任意大的整数。通过大整数，我们也可以自己实现大实数，或直接使用第三方类库。
+
+### 数值类型转换
+在F#中，没有隐式类型转换，就连int到long或float也没有。所以，数值类型转换使用对应类型的函数：
+```
+int 2.5
+float "3.1415"
+(float 2)*(float 3);;
+```
+当然也可以使用.Net框架的System.Convert方法。上述方法在转换字符串时也是调用的此方法。
+
+### 位运算符
+Operator Description Example Result &&& And 0b1111 &&& 0b0011 0b0011 ||| Or 0xFF00 ||| 0x00FF 0xFFFF ^^^ Exclusive Or 0b0011 ^^^ 0b0101 0b0110 <<< Left Shift 0b0001 <<< 3 0b1000 >>> Right Shift 0b1000 >>> 3 0b0001 
+
+
+### 比较
+因为函数式语言中，数值不可变，所以`=`在F#中并不是赋值符号。
+`=`在F#执行相等比较操作，而不等则为`<>`，这两个符号与C#有异：
+```
+5=8
+"ax"<>"ay"
+```
+那就会有人说，F#也有可变的值啊！没错，在上面的[示例代码](#sample)中`sum`为可变值，每次循环通过`<-`符号改变其值。
+*好诡异但又好有道理的符号啊！😲*
+此外，F#中还有一个`compare`函数用来比较两个值：
+```
+```
+在.Net中，比较是一个复杂的话题，在此就不展开了，可参考[MSDN文章](https://msdn.microsoft.com/zh-cn/library/bsc2ak47(v=vs.110).aspx)。
+
+## 其他语法
