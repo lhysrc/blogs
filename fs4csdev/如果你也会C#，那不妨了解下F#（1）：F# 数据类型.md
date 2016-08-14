@@ -112,6 +112,8 @@ let bin = 0b00101010y;;
 
 ### 浮点数
 需要注意的是，**在F#里，`double`和`float`都代表双精度浮点数**，单精度浮点数称为`float32`。
+
+### 三重引号字符串
 `String`还有一个字面量表示方法是三个双引号：
 ```
 let str = """<book title="Paradise Lost">
