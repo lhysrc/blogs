@@ -228,7 +228,7 @@ let MyConstant = 99
 
 在F#中，定义数据类型时使用**特性**多于使用关键字。而F#中的**特性需要放于`[< >]`内**。
 
-### 元组
+### 元组：Tuple
 
 元组是一组有序的项，其中可以包含不同类型。
 
@@ -268,12 +268,20 @@ let f (i:int) = ()
 
 ### 类型别名
 
-在F#中可给类型设置一个别名，如给`int`一个其他的名称，类似于C++中的`typledef`。
+在F#中可给类型设置一个别名，如给`int`一个其他的名称，类似于C++中的`typedef`。
 
 ```
 typle I = int
 let fn (a:I) = a + 1;;	// val fn : a:I -> I
 ```
+
+介绍`seq`时，说``seq<_>``其实就是.Net中的``IEnumerable<T>``，查看源代码，我们可以发现：
+
+```
+type seq<'T> = System.Collections.Generic.IEnumerable<'T>
+```
+
+
 
 本文链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-3.html>
 
