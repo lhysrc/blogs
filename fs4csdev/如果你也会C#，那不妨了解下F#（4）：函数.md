@@ -2,10 +2,6 @@
 
 [TOC]
 
-
-
-*本文链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-4.html>*  
-
 函数式编程其实就是按照数学上的函数运算思想来实现计算机上的运算。虽然我们不需要深入了解数学函数的知识，但应该清楚函数式编程的基础是来自于数学。
 
 例如数学函数$f(x) = x^2+x$，并没有指定返回值的类型，在数学函数中并不需要关心数值类型和返回值。F#代码为`let f x = x ** 2.0 + x`，F#代码和数学函数非常类似，其实这就是函数式编程的思想：**只考虑用什么进行计算以及计算的结果**（或者叫“输入和输出”），并不考虑怎样计算。
@@ -54,7 +50,7 @@ val it : int list = [-1; -2; -3; -4; -5]
 
 我们使用函数``negate``和列表`[1..5]`作为`List.map`的参数。
 
-但很多时候我们不需要声名一个名数名，只需使用**匿名函数**或叫**Lambda表达式**。在F#中，Lambda表达式为：关键字`fun`和参数，加上箭头`->`和函数体。则上面的代码可以更改为：
+但很多时候我们不需要给函数一个名称，只需使用**匿名函数**或叫**Lambda表达式**。在F#中，Lambda表达式为：关键字`fun`和参数，加上箭头`->`和函数体。则上面的代码可以更改为：
 
 ```
 List.map (fun i-> -i) [1..5];;
@@ -179,7 +175,7 @@ let (>>) f g x = g(f x)
 let (<<) f g x = f(g x)
 ```
 
-还是以上面的求平方和为例：
+还是以上面的求平方和为例（`Seq.map square`即是一个**部分函数**）：
 
 ```
 let sum2 nums = (Seq.map square >> Seq.sum) nums
@@ -188,21 +184,152 @@ let sum2 nums = (Seq.sum << Seq.map square) nums
 
 ## 常用模块函数
 
-在[上一篇](http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-3.html)中，我们了解了集合类型。在F#中，为这些集合类型定义了许多函数，分别在集合名称对应的模块中，例如Seq的相关函数位于模块`Microsoft.FSharp.Collections.Seq`中。而这也是我们最常用到的模块函数。
+在[上一篇](http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-3.html)中，我们了解了集合类型。在F#中，为这些集合类型定义了许多函数，分别在集合名称对应的模块中，例如Seq的相关函数位于模块`Microsoft.FSharp.Collections.Seq`中。而这也是我们最常用到的模块。
 
-下面简单介绍其中常用的函数，大家可通过MSDN了解更多：
+**模块（`module`）**是F#中组织代码的一种方式，类似于命令空间（`namespace`）。但F#中也是有命名空间的，其间的区别将在下一篇介绍。
 
-[Seq模块](https://msdn.microsoft.com/visualfsharpdocs/conceptual/collections.seq-module-%5bfsharp%5d)、[List模块](https://msdn.microsoft.com/visualfsharpdocs/conceptual/collections.list-module-%5bfsharp%5d)、[Array模块](https://msdn.microsoft.com/visualfsharpdocs/conceptual/collections.array-module-%5bfsharp%5d)。
+下面简单介绍常用的函数，并会列出与.Net的`System.Linq`中对应的函数。
 
+如无特别说明，该函数在三个模块中均可用，但**因为集合的实现方式不同，函数的复杂度也会有区别**，在使用中根据实际情况选择合适的函数。
 
+#### length
 
+对应于Linq中的`Count`。即获得集合中**元素的个数**。
 
+```
+[1..10] |> List.length;;	// 10
+Seq.length {1..100};;		// 100
+```
 
+*虽然在`Seq`中也有`length`函数，但谨慎使用，因为Seq可能为无限序列。*
 
+#### exists 和 exists2
 
+`exists`用于判断集合是否存在符合给定条件的元素，对应于Linq中的`Any`。而`exists2`用于判断**两个集合**是否包含在**同一位置**且符合给定条件的一对元素。
 
+```
+List.exists ((=) 3) [1;3;5;7];;		//true
+Seq.exists (fun n1 n2 -> n1=n2) {1..5} {5..-1..1};;	//true
+```
 
+第一行代码判断列表中是否包含等于3的元素，其中`(=) 3`即为**部分函数**，注意`=`为符号函数。
 
+第二行代码判断两个序列中，因为`{1;2;3;4;5}`和`{5;4;3;2;1}`在索引2的位置存在元素符合函数`(fun n1 n2 -> n1=n2)`，所以返回`true`。
 
-本文链接：[http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-4.html](http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-4.html)  
+#### forall 和 forall2
 
+`forall`检查是否集合中**所有**元素均满足指定条件，对应Linq中的`All`。
+
+```
+let nums = {2..2..10}
+nums |> Seq.forall (fun n -> n % 2 = 0);;	//true
+```
+
+而`forall2`和`exists2`类似，但当且仅当**所有元素**都满足相同位置且符合给定条件才返回`true`。接上一个代码片段：
+
+```
+let nums2 = {12..2..20}
+Seq.forall2 (fun n n2 -> n + 10 = n2) nums nums2;;	//true
+```
+
+#### find 和 findIndex
+
+`find`查找符合条件的**第一个元素**，对应Linq中的`First`。需要注意的是当不存在符合条件的元素，将引发`KeyNotFoundException`异常。
+
+```
+Seq.find (fun i -> i % 5 = 0) {1..100};;	//5
+```
+
+`findIndex`则返回符合条件的第一个元素的**索引**。
+
+#### map
+
+`map`对应Linq中的`Select`，将函数应用于集合中的每个元素，返回值产生一个新的集合。
+
+```
+List.map ((*) 2) [1..10];;	
+//[2; 4; 6; 8; 10; 12; 14; 16; 18; 20]
+```
+
+#### filter 和 where
+
+F#中`filter`和`where`是一样的，对应于Linq中的`Where`。用于查找符合条件的元素。
+
+```
+{1..10} |> Seq.filter (fun n -> n%2 = 0);;
+//val it : seq<int> = seq [2; 4; 6; 8; ...]
+```
+
+#### fold
+
+`fold`对应Linq中的`Aggregate`，通过提供初始值，然后将函数逐个应用于每个元素，返回单一值。
+
+```
+Seq.fold (fun acc n -> acc + n) 0 {1..5};;	//15
+Seq.fold (fun acc n -> acc + string n) "" {1..10};;	
+//"12345"
+```
+
+首先，将初始值与第一个元素应用于函数，再将返回值与第二个元素应用于函数，依此类推……
+
+Linq中的``Aggregate``包含不需要提供初始值的重载，其实F#中也有对应的`reduce`函数。类似的还有`foldBack`和`reduceBack`等逆向操作，这里就不介绍了。
+
+#### collect
+
+`collect`对应Linq中的`SelectMany`，
+
+#### append
+
+`append`将两个集合类型合并成一个，对应于Linq中的`Concat`。
+
+```
+> Array.append [|1;3;1;4|] [|5;2;0|];;
+val it : int [] = [|1; 3; 1; 4; 5; 2; 0|]
+```
+
+#### zip 和 zip3
+
+#### rev
+
+#### sort
+
+### 数学函数
+
+Linq中包含`Max`、`Min`、`Average`和`Sum`等数学函数。F#集合模块中也有对应的函数。
+
+```
+List.max [1..10]		//10
+Seq.min {1..5}			//5
+[1..10] |> List.map float |> List.average	//5.5
+List.averageBy float [1..10]				//5.5
+
+[0..100] |> Seq.where (fun x -> x % 2 <> 0) |> Seq.sum |> printf "0到100中的奇数的和为%i"
+// 0到100中的奇数的和为2500
+```
+
+需要注意的是，`average`函数需要集合中的元素支持**精确除法**（Exact division，即实现了`DivideByInt`函数的类型。*不知道为什么是ByInt。*），而F#中又**不支持隐式类型转换**，所以对`int`集合求平均值只能先转换为`float`或`float32`，或使用`averageBy`函数。
+
+`sum`函数的示例代码将[第一篇](http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-1.html)中由C#翻译过来的命令示示例代码转换成了函数式的代码。
+
+### 集合间转换
+
+三种集合类型的对应模块中，均提供转换**到（to）**另外两种集合类型，和**从（of）**另外两种类型转换的函数。
+
+如Seq模块，通过`Seq.toList`和`Seq.toArray`函数转出；通过`Seq.ofList`和`Seq.ofArray`转入。
+
+```
+Seq.toList {1..5};;			//[1; 2; 3; 4; 5]
+List.ofArray [|1..5|];;		//[1; 2; 3; 4; 5]
+```
+
+函数式编程，核心就是函数的运用。上面介绍的这些在C#中也经常使用到对应的方法，但F#提供的函数非常丰富，大家可通过MSDN了解更多：
+
+-   [Seq模块](https://msdn.microsoft.com/visualfsharpdocs/conceptual/collections.seq-module-%5bfsharp%5d)  
+-   [List模块](https://msdn.microsoft.com/visualfsharpdocs/conceptual/collections.list-module-%5bfsharp%5d)
+-   [Array模块](https://msdn.microsoft.com/visualfsharpdocs/conceptual/collections.array-module-%5bfsharp%5d)
+
+因为F#中的List和Array均实现了`IEnumarable<T>`接口，所以**Seq模块的函数也可以接收List类型和Array类型的参数**。当然，反之则不行。
+
+到现在为止，我们了解的F#都是在交互窗口中。下一篇我们再简单介绍项目创建和代码组织，即**模块**相关。*
+
+*本文发表于[博客园](http://www.cnblogs.com/hjklin)。 原文链接为：[http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-4.html](http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-4.html)。*
