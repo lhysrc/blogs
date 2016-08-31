@@ -159,7 +159,7 @@ let sum2 nums =
 	|> Seq.sum
 ```
 
-`<|`虽然用得不多，但大多用来改变优先级而无需使用括号：
+`<|`虽然用得不多，但常用来改变优先级而无需使用括号：
 
 ```
 let sum2 nums =
@@ -253,8 +253,8 @@ List.map ((*) 2) [1..10];;
 
 `mapi`与`map`类似，不过在应用的函数中还需要传入一个整数作为集合的索引。
 ```
-Seq.mapi(fun i x -> x*i) [3;5;7;8;0];; //将各个元素乘以各自的索引
-// [0; 5; 14; 24; 0]
+Seq.mapi(fun i x -> x*i) [3;5;7;8;0];; 
+// 将各个元素乘以各自的索引，结果为：[0; 5; 14; 24; 0]
 ```
 
 #### iter 和 iteri
@@ -295,7 +295,15 @@ Linq中的``Aggregate``包含不需要提供初始值的重载，其实F#中也�
 
 #### collect
 
-`collect`对应Linq中的`SelectMany`，
+`collect`对应Linq中的`SelectMany`，展开集合并返回所有**二级集合**的元素。
+
+```
+let lists = [ [0;1]; [0;1;2]; [0;1;2;3] ]
+lists |> List.collect id;;
+//[0; 1; 0; 1; 2; 0; 1; 2; 3]
+```
+
+其中**id**为`Operators`模块中的函数，它的实现为`fun n->n`，即直接对参数进行返回。
 
 #### append
 
@@ -308,9 +316,31 @@ val it : int [] = [|1; 3; 1; 4; 5; 2; 0|]
 
 #### zip 和 zip3
 
+`zip`函数将两个集合合并到一个里，合并后每个元素是一个二元元组。
+
+```
+let list1 = [ 1..3 ]
+let list2 = [ "a";"b";"c" ]
+List.zip list1 list2;;
+// [(1, "a"); (2, "b"); (3, "c")]
+```
+
+`zip3`顾名思义，就是将三个集合合并到一个里。
+
+**合并后的长度取决于最短的集合的长度。**
+
 #### rev
 
+`rev`函数反转一个列表或数组，在Seq模块中**没有**这个函数。
+
 #### sort
+
+`sort`函数基于compare函数（[第二篇](http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-2.html)中的“比较”介绍过）对集合中的元素进行排序。
+
+```
+> List.sort [1;3;-2;2];;
+val it : int list = [-2; 1; 2; 3]
+```
 
 ### 数学函数
 
@@ -341,6 +371,8 @@ Seq.toList {1..5};;			//[1; 2; 3; 4; 5]
 List.ofArray [|1..5|];;		//[1; 2; 3; 4; 5]
 ```
 
+---
+
 函数式编程，核心就是函数的运用。上面介绍的这些在C#中也经常使用到对应的方法，但F#提供的函数非常丰富，大家可通过MSDN了解更多：
 
 -   [Seq模块](https://msdn.microsoft.com/visualfsharpdocs/conceptual/collections.seq-module-%5bfsharp%5d)  
@@ -349,6 +381,6 @@ List.ofArray [|1..5|];;		//[1; 2; 3; 4; 5]
 
 因为F#中的List和Array均实现了`IEnumarable<T>`接口，所以**Seq模块的函数也可以接收List类型和Array类型的参数**。当然，反之则不行。
 
-到现在为止，我们了解的F#都是在交互窗口中。下一篇我们再简单介绍项目创建和代码组织，即**模块**相关。*
+到现在为止，我们了解的F#都是在交互窗口中。下一篇我们再简单介绍项目创建和代码组织，即**模块**相关。
 
 *本文发表于[博客园](http://www.cnblogs.com/hjklin)。 原文链接为：[http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-4.html](http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-4.html)。*
