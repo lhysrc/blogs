@@ -94,7 +94,55 @@ type PokerPlayer = {Name:string; Money:int; Position:int}
 
 *其中`Suit`为**可区分联合（Discriminated Union）**类型；`PokerPlayer`为**记录（Record）**类型。将在下一篇介绍。*
 
-### 扩展方法、扩展模块（可能需在OOP后介绍）
+### 应用程序入口
+
+在F#中，程序从程序集的最后一个文件开始执行，而且必须是一个模块。但**最后一个模块的名称可省略**。
+
+也可以使用`[<EntryPoint>]`特性应用于**最后一个代码文件的最后一个函数**，使其成为程序入口点而无需显示调用。
+
+可查看控制台应用程序项目的模板：
+
+```
+[<EntryPoint>]
+let main argv =     
+    printfn "%A" argv
+    0
+```
+
+`main`函数的参数是一个数组（通常可自定义为**字符串数组**），是应用程序的运行参数，返回的整数则为程序的**退出代码**（exit code）。
+
+若不使用`[<EntryPoint>]`，则需要在最后调用该函数，否则并不会自动调用该函数。
+
+```
+let main (argv:string[]) = 
+    printfn "%A" argv
+    System.Console.ReadKey(true) |> ignore
+    0
+main [||]
+```
+
+*控制台应用程序通常在结束之前使用`System.Console.ReadKey()`方法来防止运行完成自动退出。*
+
+### 扩展模块
+
+可以通过创建一个同名模块，在其中添加值来对原有模块进行扩展。
+
+在介绍常用函数时，我们提到`Seq`模块没有提供`rev`函数，现在自己实现以**对`Seq`模块进行扩展**。
+
+```
+open System.Collections.Generic
+module Seq =
+    /// 反转Seq中的元素
+    let rec rev (s : seq<'a>) =
+        let stack = new Stack<'a>()
+        s |> Seq.iter stack.Push
+        seq {
+            while stack.Count > 0 do
+                yield stack.Pop()
+        }
+```
+
+其中使用了.NET框架中的泛型**栈**集合类型（`System.Collections.Generic.Stack<T>`）。
 
 ## 与C#互相调用
 
@@ -140,13 +188,63 @@ let main argv =
     0
 ```
 
-打开`FSharp.Interop.Dynamic`命名空间，F#中可使用`?`来访问动态类型的属性和方法。
+打开`FSharp.Interop.Dynamic`命名空间，F#中可使用`?`来访问动态类型的属性和方法。 
 
-#### ref 和 out
+#### 调用带有 `ref` 和 `out` 参数的函数
+
+在C#中，有`ref`和`out`两个关键字来修饰函数的参数，使函数可以进行引用传递和返回多个值。若要在F#中调用，则有一些不同。
+
+带有**`ref`**参数或者**`out`**参数的函数，因为参数值可能在函数中发生改变，需要在F#先定义一个**可变值类型**，并使用**寻址操作符（`&`）**进行传入。
+
+```c#
+// C#代码，位于命名空间CSharpForFSharp
+public class CSharpClass
+{
+    public static bool OutRefParams(out int x, ref int y)
+    {
+        x = 100;
+        y = y * y;
+        return true;
+    }
+}
+```
+在F#中调用：
+
+```F#
+// F#代码，位于F#项目的Program.fs
+open CSharpForFSharp
+let mutable x,y = 0,0
+CSharpClass.OutRefParams(&x,&y)	
+```
+
+返回`true`并对`x`和`y`进行了改变。
+
+带有**`out`**的参数在C#中可以使用未赋值的变量传入，所以在F#中除了寻址传入的方法，还可以直接**忽略该参数**，则该函数在F#中成为了多返回值（即**返回`tuple`**）的形式：
+
+```
+let successful, result = Int32.TryParse(str)
+```
+
+`Int32.TryParse`返回了两个值，第一个总是函数返回值，而后是out参数。
+
+#### 柯里化C#的方法
+
+因为C#中的函数无论有多少个参数，在F#中调用时都视为**一个`tuple`参数**，所以无法柯里化和使用函数管道符（`|>`）操作。
+
+在F#中可以使用`FuncConvert`类将.NET中的函数转换成F#中的函数。
 
 
 
-#### 柯里化
+```
+let join : string*string list -> string = System.String.Join
+let curryJoin = FuncConvert.FuncFromTupled join
+[ 1..10 ]
+|> List.map string
+|> curryJoin "*"				// "1*2*3*4*5*6*7*8*9*10"
+let joinStar = curryJoin "*"	// joinStar类型为：string list -> string
+```
+
+以上代码将`System.String.Join`转化为F#中的函数，因为该方法具有多个重载，所以第一行代码用来指定一个要转换的重载。
 
 ### C#调用F#代码
 
@@ -185,19 +283,24 @@ F#中的`string -> string -> string -> int`类型函数在C#中变成了`FSharpF
 
 F#模块在编译成静态类后，在C#中使用变得不一致。在F#中提供了**`CompiledName`特性用来指定编译后的名称**。
 
+在第一篇中提到的F#中可用“\`\` \`\`”来使用任何字符串作为定义值的名称，若想在C#中调用这类值（不符合变量命名规则的变量），也需要用**`CompiledName`**指定编译后的名称，否则无法调用。
+
 ```
 module TestModule
 [<CompiledName("Add")>]
 let add = fun a b -> a+b
+[<CompiledName("IsSeven")>]
+let ``7?`` i = i % 7 = 0
 ```
 
 在C#中调用：
 
 ```C#
 int i = TestModule.Add(3,4);
+var b = TestModule.IsSeven(7);
 ```
 
-
+#### 
 
 
 
