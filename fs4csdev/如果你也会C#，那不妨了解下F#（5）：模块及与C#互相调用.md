@@ -13,8 +13,9 @@ F#项目模板有以下几种类型（以VS2015为例）： ![F#项目模板](ht
 -   “可移植库”则可创建用于多平台的库，支持的平台在括号里说明。
 -   “**库**”用于创建类库
 -   “**控制台应用程序**”大家就熟悉了。
+-   *安卓项目为安装了Xamarin创建的，请忽略。*
 
-下面我们就创建一个控制台应用程序来说明，下图为程序的`Program.fs`文件及运行结果：
+我们创建一个控制台应用程序来说明，下图为程序的`Program.fs`文件及运行结果：
 
 ![F#控制台程序及运行结果](https://qtjxpa.dm2302.livefilestore.com/y3mcpJ7Ax7cvJVXPe8HY9Q0T7eVH9tVK7QZ9hB6LMLltKV58nSRLAPtcliXrA3UBg3PmiRLk0s89j_b1AtjGTPvk9sElZZsSCTas9Mt0U7SmxsTuBeXR0YWhKekNlc1NU95sEzL9fpc0lOI7cs6Puwxx0PFkmYQspv6uolwTvJvIK0?width=563&height=366&cropmode=none)
 
@@ -34,7 +35,7 @@ F#项目模板有以下几种类型（以VS2015为例）： ![F#项目模板](ht
 
 我们创建`File1.fs`文件时，默认会在开头添加`module File1`，当然也可自己改成其他名称。
 
-```
+```F#
 module File1
 let x = 1
 ```
@@ -47,9 +48,9 @@ let x = 1
 
 #### 嵌套模块
 
-模块中可嵌套模块，但定义内层模块需要在模块名后使用等号（`=`），且内层模块必须比它的上层模块**缩进**一级。
+模块中可嵌套模块，但定义内层模块需要在模块名后使用等号（`=`），且内层模块的内容必须比它的上层模块**缩进**一级。
 
-```
+```F#
 module TopLevelModel		
 module NestedModule = 	//第一层嵌套模块
     let i = 1
@@ -82,7 +83,7 @@ module NestedModule = 	//第一层嵌套模块
 
 但F#中的命名空间不能像模块那样嵌套，但可以在同一文件中定义多个命名空间。
 
-```
+```F#
 namespace PlayingCards
 type Suit = Spade | Club | Diamond | Heart
 
@@ -102,7 +103,7 @@ type PokerPlayer = {Name:string; Money:int; Position:int}
 
 可查看控制台应用程序项目的模板：
 
-```
+```F#
 [<EntryPoint>]
 let main argv =     
     printfn "%A" argv
@@ -113,7 +114,7 @@ let main argv =
 
 若不使用`[<EntryPoint>]`，则需要在最后调用该函数，否则并不会自动调用该函数。
 
-```
+```F#
 let main (argv:string[]) = 
     printfn "%A" argv
     System.Console.ReadKey(true) |> ignore
@@ -129,7 +130,7 @@ main [||]
 
 在介绍常用函数时，我们提到`Seq`模块没有提供`rev`函数，现在自己实现以**对`Seq`模块进行扩展**。
 
-```
+```F#
 open System.Collections.Generic
 module Seq =
     /// 反转Seq中的元素
@@ -148,7 +149,7 @@ module Seq =
 
 F#代码和C#代码（包括VB.NET）一样，都编译成MSIL，在CLR运行。（可参考文章[《.NET框架》](http://www.tracefact.net/CLR-and-Framework/DotNet-Framework.aspx)）所以，两种语言之间可以方便地互相调用。
 
-但C#和F#中又有一些独立的东西不能互相使用，下面简单介绍一下。
+程序集的引用大家都熟悉，但C#和F#中又有一些独立的东西不能互相使用，下面简单介绍一下在互相调用中常见的问题。
 
 ### F#调用C#代码
 
@@ -221,11 +222,11 @@ CSharpClass.OutRefParams(&x,&y)
 
 带有**`out`**的参数在C#中可以使用未赋值的变量传入，所以在F#中除了寻址传入的方法，还可以直接**忽略该参数**，则该函数在F#中成为了多返回值（即**返回`tuple`**）的形式：
 
-```
+```F#
 let successful, result = Int32.TryParse(str)
 ```
 
-`Int32.TryParse`返回了两个值，第一个总是函数返回值，而后是out参数。
+`Int32.TryParse`返回了两个值，第一个总是函数返回值，而后是`out`参数。
 
 #### 柯里化C#的方法
 
@@ -233,9 +234,7 @@ let successful, result = Int32.TryParse(str)
 
 在F#中可以使用`FuncConvert`类将.NET中的函数转换成F#中的函数。
 
-
-
-```
+```F#
 let join : string*string list -> string = System.String.Join
 let curryJoin = FuncConvert.FuncFromTupled join
 [ 1..10 ]
@@ -246,9 +245,13 @@ let joinStar = curryJoin "*"	// joinStar类型为：string list -> string
 
 以上代码将`System.String.Join`转化为F#中的函数，因为该方法具有多个重载，所以第一行代码用来指定一个要转换的重载。
 
+*其实`FuncConvert`类也可以在C#中使用，需要添加`FSharp.Core`程序集，有兴趣的可以自己尝试。*
+
 ### C#调用F#代码
 
 本节涉及操作需要创建两个项目，一个**F#的类库项目**，一个**C#的控制台项目**。然后C#项目引用F#项目，因为**涉及到F#中独有类型，还需要引用`FSharp.Core`程序集。**
+
+若要在UWP项目中引用F#项目，需要通过“可移植库”模板创建项目。
 
 因为C#中的类型比F#少了很多，所以很多C#不支持的类型均使用**类**来代替，使用时只需像使用类一样使用它就行了。而模块，在C#中则为**静态类**。
 
@@ -258,7 +261,7 @@ let joinStar = curryJoin "*"	// joinStar类型为：string list -> string
 
 `FSharpFunc<_,_>`对象（位于FSharp.Core程序集的`Microsoft.FSharp.Core`命名空间）。
 
-```
+```F#
 //F# 代码，位于TestModule模块
 open System
 type MathUtilities =
@@ -268,7 +271,7 @@ type MathUtilities =
 
 `GetAdder`函数返回一个将三个字符串转成int再相加的函数，在C#中调用此函数：
 
-```
+```c#
 FSharpFunc<string, FSharpFunc<string, FSharpFunc<string, int>>> ss = MathUtilities.GetAdder();
 var ret = ss.Invoke("123").Invoke("45").Invoke("67");
 ```
@@ -281,11 +284,11 @@ F#中的`string -> string -> string -> int`类型函数在C#中变成了`FSharpF
 
 通过上面的了解，至少可以简单地使用F#和C#互相调用。但有个地方可能使有强迫症的程序员很难受：F#模块中的函数命名使用的是**驼峰式（camelCase）**，在C#中类的方法则使用**PascalCase**命名规范。
 
-F#模块在编译成静态类后，在C#中使用变得不一致。在F#中提供了**`CompiledName`特性用来指定编译后的名称**。
+F#模块在编译成静态类后，在C#中使用变得不一致。在F#中提供了**`CompiledName`**特性用来**指定编译后的名称**。
 
-在第一篇中提到的F#中可用“\`\` \`\`”来使用任何字符串作为定义值的名称，若想在C#中调用这类值（不符合变量命名规则的变量），也需要用**`CompiledName`**指定编译后的名称，否则无法调用。
+在第一篇中提到的F#中可用“\`\` \`\`”来使任何字符串作为变量（值）的名称，若想在C#中调用这类值（不符合变量命名规则），也需要用**`CompiledName`**指定编译后的名称，否则无法调用。
 
-```
+```F#
 module TestModule
 [<CompiledName("Add")>]
 let add = fun a b -> a+b
@@ -300,7 +303,9 @@ int i = TestModule.Add(3,4);
 var b = TestModule.IsSeven(7);
 ```
 
-#### 
 
 
+
+
+*本文发表于[博客园](http://www.cnblogs.com/hjklin)。 转载请注明源链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-4.html>。*
 
