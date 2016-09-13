@@ -1,7 +1,7 @@
 # F#集合类型和其他核心类型
-本文链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-3.html>  
 [TOC]
 
+##前言
 在第一篇中，我们介绍了一些基础数据类型，其实那篇标题中不应该含有“F#”字眼，因为并不是特有的。
 在本篇中，我们介绍如数组这些集合类型以及部分F#特有的类型。
 
@@ -283,5 +283,5 @@ type seq<'T> = System.Collections.Generic.IEnumerable<'T>
 
 
 
-本文链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-3.html>
+*本文发表于[博客园](http://www.cnblogs.com/hjklin)。 转载请注明源链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-3.html>。*
 

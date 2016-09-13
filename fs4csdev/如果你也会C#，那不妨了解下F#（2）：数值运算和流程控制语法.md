@@ -1,5 +1,4 @@
 ﻿# 数值运算和流程控制语法
-本文链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-2.html>
 
 ## 一些废话
 一门语言火不火，与语言本身并没太大关系，主要看语言的推广。
@@ -195,3 +194,6 @@ match i with
 **模式匹配**在函数式编程中有着作用，在之后的函数式编程中也会进行介绍。
 
 *在下一篇中，我们来了解数组和列表，以及一些F#特有的类型。*
+
+*本文发表于[博客园](http://www.cnblogs.com/hjklin)。 转载请注明源链接：<http://www.cnblogs.com/hjklin/p/fs-for-cs-dev-2.html>。*
+
