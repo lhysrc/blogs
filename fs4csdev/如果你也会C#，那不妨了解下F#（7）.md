@@ -1,5 +1,8 @@
-# 在F#中使用OOP：继承、接口与泛型
+# 面向对象编程之继承、接口与值类型
 
+## 前言
+
+面向对象三大基本特性：封装、继承、多态。继承
 
 ## 继承
 
@@ -62,9 +65,7 @@ let i2 ： int = unbox o
 
 在F#中，`obj`为`System.Object`的别名。
 
-## 泛型及约束
-
-
+## 
 
 ## 扩展
 
@@ -79,22 +80,37 @@ let i2 ： int = unbox o
 
 
 
-##结构和枚举
+##结构（Struct）
+
+在前面介绍的面向对象类以及类涉及的相关内容，但在示例的代码感觉使用类并没有感觉有什么优势。其实像上一篇中的`Point2D`类，使用结构（`Struct`）也许会更好一些。
+
+结构是值类型，与类的引用类型不同，在内存分配上是被分配在栈（Stack）上，所以在使用中内存消耗更少，而且不需要垃圾回收（GC）。这方面知识熟悉.NET框架的大家都很熟悉了。
+
+下面是结构的定义：
+
+```F#
+type Point2D(xValue:double, yValue:double) = struct
+    member this.X = xValue
+    member this.Y = yValue
+end
+[<Struct>]
+type Point2D(xValue:double, yValue:double) =
+    member this.X = xValue
+    member this.Y = yValue
+```
+
+结构定义与类一样，在内容不为空时可省略`struct end`关键字。不过这样就和类一样了，所以**需要加上`[<Struct>]`特性**以示区别。这和抽象类、密封类的定义一致。
 
 
 
 
 
+## 枚举（Enum）
 
 
 
 
 
-
-
-
-
-
----
+## 泛型及约束
 
 
