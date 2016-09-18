@@ -14,7 +14,7 @@
 ## Hello, World 
 在使用F#时，可以像C#一样创建一个控制台项目进行测试。
 但因为F#支持以脚本形式运行，所以直接打开**F# Interactive**（以下简称fsi）进行交互是最方便的。
- 
+
 在Visual Studio中可在“*视图-其他窗口*”中打开。*以前没有csi的时候，一直拿fsi来测试C#代码，在VS2015中终于添加了csi。*  
 如果不想打开臃肿的VS，可在Microsoft SDK的安装位置找到fsi。以下是我安装的F# 4.0的fsi的位置：
 ```
@@ -51,7 +51,7 @@ Console.WriteLine("0到100中的奇数的和为{0}", sum);
 ```
 这段命令式代码只是简单地把0到100中的奇数相加，并把和输出。
 虽然在C#中也支持函数式，但在这里我们为了了解基本语法，使用简单语句来介绍。
-  
+
 以下是F#版本的代码：
 ```
 let mutable sum = 0 
@@ -75,25 +75,25 @@ printfn "0到100中的奇数的和为%A" sum ;;
 ### 基础类型
 下面将C#和F#的数据类型定义作对比：
 
-| 数据类型 | C# | F#  |
-| --------- |--------- | --------- |
-|Int |int i = 0;| let i = 0 <br> let i = 0l|
-| Uint|  uint i = 1U;|  let i = 1u <br> let i = 1ul| 
-|  Decimal| decimal d = 1m;| let d = 1m <br> let d = 1M | 
-| Short| short c = 2; |let c = 2s| 
-|  Long| long l = 5L; |let l = 5L|
-| unsigned short| ushort c = 6;| let c = 6us|
-| unsigned long| ulong d = 7UL;| let d = 7UL |
-|  byte| byte by = 86;| let by = 86y <br> let by = 0b00000101y <br> let by = ‘a’B |
-|  unsigned byte| sbyte sby = 86;| let sby = 86uy <br> let sby = 0b00000101uy |
-|  bool| bool b = true;| let b = true |
-|  double| double d = 0.2;<br>  double d = 0.2d <br> double d = 2e-1 <br> double d = 2 <br> double d0 = 0 | let d = 0.2 <br> let d = 2e-1 <br> let d = 2. <br> let d0 = 0x0000000000000000LF| 
-|  float| float f = 0.3;<br> foat f = 0.3f;<br> float f = 2;<br>float f0 = 0.0f;| let f = 0.3f <br> let f = 0.3F<br> let f = 2.f <br> let f0 = 0x00000000lf 
-|  native int |IntPtr n = new IntPtr(4); |let n = 4n|
-|   unsigned native int |UIntPtr n = new UIntPtr(4);| let n = 4un|
-|char| char c = ‘c’;| let c = ‘a’ |
-|string| string str = “abc\n”;<br> string str = @"c:\filename"; |let str = “abc\n” <br> let str = @"c:\filename"|
-| big int| BigInteger i = new BigInteger(9);| let i = 9I|
+| 数据类型                | C#                                       | F#                                       |
+| ------------------- | ---------------------------------------- | ---------------------------------------- |
+| Int                 | int i = 0;                               | let i = 0 <br> let i = 0l                |
+| Uint                | uint i = 1U;                             | let i = 1u <br> let i = 1ul              |
+| Decimal             | decimal d = 1m;                          | let d = 1m <br> let d = 1M               |
+| Short               | short c = 2;                             | let c = 2s                               |
+| Long                | long l = 5L;                             | let l = 5L                               |
+| unsigned short      | ushort c = 6;                            | let c = 6us                              |
+| unsigned long       | ulong d = 7UL;                           | let d = 7UL                              |
+| byte                | byte by = 86;                            | let by = 86y <br> let by = 0b00000101y <br> let by = ‘a’B |
+| unsigned byte       | sbyte sby = 86;                          | let sby = 86uy <br> let sby = 0b00000101uy |
+| bool                | bool b = true;                           | let b = true                             |
+| double              | double d = 0.2;<br>  double d = 0.2d <br> double d = 2e-1 <br> double d = 2 <br> double d0 = 0 | let d = 0.2 <br> let d = 2e-1 <br> let d = 2. <br> let d0 = 0x0000000000000000LF |
+| float               | float f = 0.3;<br> foat f = 0.3f;<br> float f = 2;<br>float f0 = 0.0f; | let f = 0.3f <br> let f = 0.3F<br> let f = 2.f <br> let f0 = 0x00000000lf |
+| native int          | IntPtr n = new IntPtr(4);                | let n = 4n                               |
+| unsigned native int | UIntPtr n = new UIntPtr(4);              | let n = 4un                              |
+| char                | char c = ‘c’;                            | let c = ‘a’                              |
+| string              | string str = “abc\n”;<br> string str = @"c:\filename"; | let str = “abc\n” <br> let str = @"c:\filename" |
+| big int             | BigInteger i = new BigInteger(9);        | let i = 9I                               |
 F#的字面量详细介绍可查看[MSDN文章](https://msdn.microsoft.com/visualfsharpdocs/conceptual/literals-%5Bfsharp%5D?f=255&MSPPError=-2147217396)。
 
 ### 十六进制、八进制和二进制
@@ -126,11 +126,11 @@ let str = """<book title="Paradise Lost">
 在类型对比表中，byte行可以看到有一个创建字节数组的语法：
 ```
 let asciiBytes = "abc"B  // val asciiBytes : byte [] = [|97uy; 98uy; 99uy|]
-```  
+```
 其等价的C#代码是：
 ```
 byte[] asciiBytes = Encoding.ASCII.GetBytes("abc");
-```  
+```
 当然，只支持ASCII编码。
 
 ## 变量名

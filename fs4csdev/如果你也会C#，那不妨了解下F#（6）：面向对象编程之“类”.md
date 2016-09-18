@@ -308,8 +308,7 @@ open System.Diagnostics
 type Point2D (xValue:double, yValue:double) as self =
     let mutable x = xValue
     static let mutable count = 0    
-    do
-        self.OriginalPoint2 <- new Point2D()
+    do        
         count <- count + 1
     
     member __.OriginalPoint with get () = Point2D()
