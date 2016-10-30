@@ -129,7 +129,7 @@ type Point2D() =
 
 F#类中的方法重载与C#一样，只需重新定义一个同名成员函数，且签名不同即可。下面实现一个接受`int`类型的`FromXY`方法：
 
-```
+```F#f
 static member FromXY (x:int, y:int) =
         Point2D.FromXY(float x,float y)     
 ```
