@@ -85,7 +85,7 @@ type I2DLocation =					//简要定义方式
 
 **接口在F#需要显示实现**，所以在实现接口后，使用时也需要**转换至接口类型**，否则无法调用接口的属性或方法。
 
-```
+```F#
 type Point2D(xValue:double, yValue:double) as this=
 	……	//省略其他代码
 	interface I2DLocation with
@@ -121,7 +121,7 @@ pts.Sort({new IComparer<Point2D> with
 
 在C#中，实现`IDisposable`的对象可用`using`进行自动销毁。在F#中，则有对应的`use`关键字和`using`函数，而且在实例化实现了`IDisposable`接口的对象，必须使用`new`关键字。
 
-```
+```F#
 open System; open System.Data.SqlClient
 type Database(conStr) =
     let con = new SqlConnection(conStr)	//new不可省略
@@ -155,7 +155,7 @@ using (new Database("connection string ...")) testUsing
 
 但基类和子类之间的转换，F#提供`upcast`（子类转为基类）和`downcast`（基类转为子类）函数进行转换，或者使用对应的符号函数：`:>`和`:?>`。
 
-```
+```F#
 type Base() = class end							//定义基类
 type Derived() = inherit Base()					//定义子类
 let myDerived = Derived()						
@@ -215,7 +215,7 @@ C#的代码与F#一样，最后一项`null`其实是无法被匹配到的。F#�
 
 F#中使用`box`和`unbox`函数进行装箱和拆箱操作：
 
-```
+```F#
 let i1 = 4
 let o = box i	//此时o为obj类型
 let i2 ： int = unbox o
@@ -263,7 +263,7 @@ type Point2D(xValue:double, yValue:double) =
 
 枚举在F#中比较少用，替代的是使用**可区分联合**（Discriminated Unions，常被称作DU）。枚举可看作是可区分联合的简化，它们之间的区别等介绍可区分联合时再说明。下面是枚举的定义及与其基础类型的转换：
 
-```
+```F#
 type Card =
     | Jack = 11
     | Queen = 12
@@ -279,7 +279,7 @@ F#与C#同样基于.NET，所以泛型也并没有什么特殊的。在使用上
 
 可以在类、结构、接口、集合、函数等中使用泛型。
 
-```
+```F#
 let print<'a> (x:'a) = 
     printfn "%A" x
 type MyClass<'T> (y:'T) =    

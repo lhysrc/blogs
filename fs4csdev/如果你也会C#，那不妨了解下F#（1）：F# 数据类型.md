@@ -24,12 +24,12 @@
 介绍任何语言的特有方式就是通过那几乎成为标准的“Hello, World”程序。  
 F# 输出可使用 `printf` 函数，如下：
 
-```
+```F#
 printf "Hello, world!"
 ```
 
 当然，也可以像C#一样使用 .Net 的控制台输出函数：
-```
+```F#f
 System.Console.Write("Hello World")
 ```
 当把以上代码敲进fsi里按回车后，会发现并没反应，是因为在fsi里提交代码必须以`;;`双分号结尾。
@@ -40,7 +40,7 @@ System.Console.Write("Hello World")
 ## F#基础类型
 
 下面，我们尝试把以下简单的C#代码转换成F#代码：
-```
+```F#
 int sum = 0; 
 for (int i = 0; i<=100; i++) 
 {     
@@ -53,7 +53,7 @@ Console.WriteLine("0到100中的奇数的和为{0}", sum);
 虽然在C#中也支持函数式，但在这里我们为了了解基本语法，使用简单语句来介绍。
 
 以下是F#版本的代码：
-```
+```F#
 let mutable sum = 0 
 for i = 0 to 100 do
     if i%2 <> 0 then sum <- sum + i 
@@ -99,7 +99,7 @@ F#的字面量详细介绍可查看[MSDN文章](https://msdn.microsoft.com/visua
 ### 十六进制、八进制和二进制
 我们知道，在C#中，可以用`0x`前缀定义十六进制数值。  
 而F#中除了**十六进制（`0x`）**，还可以直接定义**八进制（`0o`）和二进制（`0b`）**的数值。
-```
+```F#
 let hex = 0xFABC
 let oct = 0o7771L
 let bin = 0b00101010y;;
@@ -114,7 +114,7 @@ let bin = 0b00101010y;;
 
 ### 三重引号字符串
 `String`还有一个字面量表示方法是三个双引号：
-```
+```F#
 let str = """<book title="Paradise Lost">
     <content />
 </book>"""
@@ -124,18 +124,18 @@ let str = """<book title="Paradise Lost">
 
 ### 字节数组
 在类型对比表中，byte行可以看到有一个创建字节数组的语法：
-```
+```F#
 let asciiBytes = "abc"B  // val asciiBytes : byte [] = [|97uy; 98uy; 99uy|]
 ```
 其等价的C#代码是：
-```
+```F#
 byte[] asciiBytes = Encoding.ASCII.GetBytes("abc");
 ```
 当然，只支持ASCII编码。
 
 ## 变量名
 F#的变量名命名规则与C#基本一致，但也可在变量名中包含单引号`'`:
-```
+```F#
 let x = 10
 let x' = 11
 let Tom's = "2010"
@@ -144,13 +144,13 @@ let Tom's = "2010"
 
 在C#中，若要将**关键字或保留字**作为变量名，则可以变量名前加`@`实现：
 例如使用代码
-```
+```c#
 class @class {}
 ```
 定义一个名为class的类。
 
 但是在F#中，只需在前后加上` `` `即可将任意字符串指定为变量名：
-```
+```F#
 let ``let`` = 4
 let ``I love F#`` = "This is an F# program."
 (*
